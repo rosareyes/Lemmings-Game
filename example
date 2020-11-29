@@ -1,0 +1,21 @@
+import pyxel
+
+
+class Hello:
+    # properties
+    # could be @property
+    cx = 0
+    cy = 3
+    image=""
+
+    def __init__(self,x,y,img):
+        self.cx = x
+        self.cy = y
+        self.image=img
+
+#setter and getter
+obj = Hello(10,50,"")
+obj.image="Brick" #setting a value
+print("X value is: " + str(obj.cx)) #getting a value
+print("y value is: " + str(obj.cy))
+print("image value is: " + str(obj.image))
