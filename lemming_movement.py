@@ -106,7 +106,7 @@ class Lemming:
 class Cell:
     __cx, __cy = 0, 0
     __image = ""
-    container: list = []  # ["Platform", "Umbrella"]
+    container: list = ["", ""]  # ["Platform", "Umbrella"]
 
     def __init__(self, x, y):
         self.__cx = x
@@ -167,7 +167,7 @@ class App:
             self.grid.append([])
             for j in range(self.columna):
                 cell = Cell(i, j)
-                cell.image = str("s")
+                # cell.image = str("s")
                 self.grid[i].append(cell)
         pyxel.run(self.update, self.draw)
 
@@ -245,7 +245,7 @@ class App:
             for j in range(self.columna):
                 cell = self.grid[i][j]
                 pyxel.blt((cell.x * 16), (cell.y * 16) + 48, 0, 0, 28, 16, 4, 0)
-                pyxel.text(cell.x * 16, (cell.y * 16) + 48, cell.image, 3)
+                pyxel.text(cell.x * 16, (cell.y * 16) + 40, cell.image, 3)
         # pyxel.blt(0, 50, 0, self.lemmings[0].lemming.sprite[0][0], self.lemmings[0].lemming.sprite[0][1], 16, 16, 0)
         self.test_blt(self.sqX, self.sqY)
         for lemming in self.lemmings:

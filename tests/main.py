@@ -18,7 +18,7 @@ class Cell:
         self.cy=y
         self.image=""
 
-        pyxel.image(1).load(0, 0, "assets/cat_16x16.png")
+        pyxel.image(1).load(0, 0, "../assets/cat_16x16.png")
 
 class App:
     GAME_WIDTH = 256

@@ -113,10 +113,10 @@ class App:
     lemmings=[]    
     def __init__(self):
         pyxel.init(self.WIDHT, self.HEIGHT, caption="Pyxel Lemmings")
-        pyxel.image(0).load(0, 0, "assets/umbrella.png")
-        pyxel.image(0).load(0, 16, "assets/umbrella.png")
-        pyxel.image(0).load(0, 32, "assets/umbrella.png")
-        pyxel.image(0).load(0, 48, "assets/umbrella.png")
+        pyxel.image(0).load(0, 0, "../assets/umbrella.png")
+        pyxel.image(0).load(0, 16, "../assets/umbrella.png")
+        pyxel.image(0).load(0, 32, "../assets/umbrella.png")
+        pyxel.image(0).load(0, 48, "../assets/umbrella.png")
         
         #create matrix        
         for i in range(self.fila):
