@@ -1,7 +1,8 @@
 class Cell:
     __cx, __cy = 0, 0
-    __image = ""
-    container: list = []  # ["Platform", "Umbrella"]
+    __sprite = [0, 28]
+    __floor: bool = False
+    __container = [""]  # ["p", "Umbrella"]
     # len = no hay platform
     # 1 = hay platform
 
@@ -26,9 +27,26 @@ class Cell:
         self.__cy = value
 
     @property
-    def image(self):
-        return self.__image
+    def sprite(self):
+        return self.__sprite
 
-    @image.setter
-    def image(self, value):
-        self.__image = value
+    @sprite.setter
+    def sprite(self, value):
+        self.__sprite = value
+
+    @property
+    def container(self):
+        return self.__container
+
+
+    @container.setter
+    def container(self, value):
+        self.__container[0] = value
+
+    @property
+    def floor(self):
+        return self.__floor
+
+    @floor.setter
+    def floor(self, value):
+        self.__floor = value

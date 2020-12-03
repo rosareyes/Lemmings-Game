@@ -10,7 +10,7 @@ from classes.marker import Marker
 
 class App:
     MAX_SUELOS = 3
-    Max_Lemmings = 20
+    Max_Lemmings = 1
     lemmings = []
     x = 0
     # MYSIZE: the size of every board's square
@@ -23,7 +23,7 @@ class App:
     color = 3
     # we add 16 in order for the matrix to draw all of it
     # bc for some reason the last one of the row doesn't get drawn
-    row = int(HEIGHT / 16) + 16
+    row = int(HEIGHT / 16)
     col = int(WIDTH / 16)
 
     def __init__(self):
@@ -35,9 +35,18 @@ class App:
             self.grid.append([])
             for j in range(self.col):
                 cell = Cell(i, j)
-                # cell.image = str("s")
+
                 self.grid[i].append(cell)
+        self.grid[0][4].floor = True
+        self.grid[1][4].floor = True
         pyxel.run(self.update, self.draw)
+
+    def exist_floor(self,x,y):
+        for i in self.grid:
+            row = int(x / 16)
+            col = int(y / 16)
+            if self.grid[row][col].floor:
+                return True
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
@@ -62,8 +71,7 @@ class App:
             # (the 32 spaces up are occupied by the board's marker)
             row = int((self.sqY - 32) / 16)
             col = int(self.sqX / 16)
-            self.grid[col][row].image = "U"
-            self.grid[col][row].container[1] = "Umbrella"
+            self.grid[col][row].container[1] = "u"
             # Aqui se debe crear un objeto llamado Umbrella y se añade al container
             # print(self.grid[col][row].container[1])
 
@@ -71,25 +79,34 @@ class App:
             row = int((self.sqY - 32) / 16)
             col = int(self.sqX / 16)
             print("enter: ", row, col)
-            self.grid[col][row].image = "L"
-            self.grid[col][row].container[1] = "Ladder"
+            self.grid[col][row].container[1] = "l"
             print(self.grid[col][row].container[1])
 
         # Lemmings
         if pyxel.frame_count % 50 == 0: # que es esto?
             if self.Max_Lemmings > 0:  # len(list)
-                lemming = Lemming(0, 32, "R")
+                lemming = Lemming(0, 0, "R")
                 self.lemmings.append(lemming)
                 self.Max_Lemmings -= 1
 
         # velocity
-        if pyxel.frame_count % 5 == 0:
+        if pyxel.frame_count % 2 == 0:
+
             for lemming in self.lemmings:
                 lemming.walk()
+                print(lemming.direction)
+                if lemming.y < (self.HEIGHT-16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
+                    lemming.direction="D"
+                elif lemming.x > self.WIDTH - 16:
+                    lemming.direction="L"
+                else:
+                    lemming.direction = "R"
+
                 if lemming.direction == "R":
                     if lemming.x > self.WIDTH - 16:
                         lemming.changeDirection()
                 if lemming.direction == "L":
+                    print(lemming.x)
                     if lemming.x < 0:
                         lemming.changeDirection()
 
@@ -117,26 +134,15 @@ class App:
         for i in range(self.row):
             for j in range(self.col):
                 cell = self.grid[i][j]
-                pyxel.blt((cell.x * 16), (cell.y * 16) + 48, 0, 0, 28, 16, 4, 0)
-                pyxel.text(cell.x * 16, (cell.y * 16) + 40, cell.image, 3)
+                if cell.floor:
+                    pyxel.blt((cell.x * 16), (cell.y * 16) + 48, 0, self.grid[i][j].sprite[0], self.grid[i][j].sprite[1], 16, 4, 0)
+                # print("i: {}, j: {}".format(i, j))
+
+
+                # pyxel.text(cell.x * 16, (cell.y * 16) + 40, cell.sprite, 3)
         # pyxel.blt(0, 50, 0, self.lemmings[0].lemming.sprite[0][0], self.lemmings[0].lemming.sprite[0][1], 16, 16, 0)
         pyxel.rectb(self.sqX, self.sqY, 16, 16, 13)
-        # drawing a door:
-        # pyxel.blt(self.sqX, self.sqY, 0, 16, 32, 16, 16, 0)
 
         for lemming in self.lemmings:
-            pyxel.blt(lemming.x,lemming.y,0,lemming.sprite_actual[0],lemming.sprite_actual[1],16,16,0)
+            pyxel.blt(lemming.x,lemming.y+32,0,lemming.sprite_actual[0],lemming.sprite_actual[1],16,16,0)
 
-    # def test_blt(self, x, y):
-    #
-    #     # lemming.sprite[0] = lemming.sprites[0]
-    #     # lemming.sprite[1] = lemming.sprites[1]
-    #     # pyxel.blt(lemming.x,lemming.y,0,lemming.sprite[0][0],lemming.sprite[0][1],16,16,0)
-    #     pyxel.rectb(x, y, 16, 16, 13)
-    #     pyxel.blt(x, y, 0, 16, 32, 16, 16, 0)
-    #     # drawing a blocker
-    #     # pyxel.blt(x, y+8, 0, 0, 16, 16, 8, 0)
-    #     # drawing a ladder
-    #     # pyxel.blt(x, y, 0, 16, 16, 16, 16, 0)
-    #     # drawing a lemming
-    #     # pyxel.blt(x, y, 0, 0, 0, 16, 16, 0)

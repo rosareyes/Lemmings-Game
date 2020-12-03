@@ -15,7 +15,7 @@ class Lemming:
     # 5: 0, 48 Lemming L
     # 6: 16,48 Lemming L
     __sprites = [[0, 0], [16, 0], [32, 0],[48, 0], [0, 48], [16, 48], [32,48],[48,48]]
-    __sprite=[[0, 0], [16, 0], [32, 0], [48, 0]]
+    __sprite = [[0, 0], [16, 0], [32, 0], [48, 0]]
     __sprite_actual = [0, 0]
 
     def __init__(self, x, y, direction):
@@ -83,12 +83,20 @@ class Lemming:
     def walk(self):
         if self.__direction == "R":
             self.__coordX += 1
-        else:
+        elif self.__direction == "L":
             self.__coordX -= 1
+        elif self.__direction == "D":
+            self.__coordY+=1
+        elif self.__direction=="US":
+            self.__coordY-=4
+            self.__coordX+=4
+        elif self.__direction=="DS":
+            self.y+=16
+            self.x+=16
+
         self.__index += 1
         if self.__index >= len(self.sprite):
             self.__index = 0
-        # cómo hacer que se muevan más lento?
         self.__sprite_actual = self.__sprite[self.index]
 
     def avanzarR(self):
