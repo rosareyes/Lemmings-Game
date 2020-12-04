@@ -14,7 +14,8 @@ class Lemming:
     # 4: 48, 0 Lemming R
     # 5: 0, 48 Lemming L
     # 6: 16,48 Lemming L
-    __sprites = [[0, 0], [16, 0], [32, 0],[48, 0], [0, 48], [16, 48], [32,48],[48,48]]
+    # __sprites = [[0, 0], [16, 0], [32, 0], [48, 0], [0, 48], [16, 48], [32, 48], [48, 48]]
+    __sprites = [[5, 7], [22, 7], [37, 7], [54, 6], [6, 55], [22, 55], [37, 55], [53, 54]]
     __sprite = [[0, 0], [16, 0], [32, 0], [48, 0]]
     __sprite_actual = [0, 0]
 
@@ -83,7 +84,9 @@ class Lemming:
     def walk(self):
         if self.__direction == "R":
             self.__coordX += 1
+            #print("Entro a walk R, mi coord X: ", self.__coordX)
         elif self.__direction == "L":
+            #print("Entro a walk, mi coord X: ",self.__coordX)
             self.__coordX -= 1
         elif self.__direction == "D":
             self.__coordY+=1
@@ -94,10 +97,11 @@ class Lemming:
             self.y+=16
             self.x+=16
 
-        self.__index += 1
-        if self.__index >= len(self.sprite):
-            self.__index = 0
-        self.__sprite_actual = self.__sprite[self.index]
+        # if self.__direction=="L" or self.__direction=="R":
+        #     self.__index += 1
+        #     if self.__index >= len(self.sprite):
+        #         self.__index = 0
+        #     self.__sprite_actual = self.__sprite[self.index]
 
     def avanzarR(self):
         self.__coordX += 1
