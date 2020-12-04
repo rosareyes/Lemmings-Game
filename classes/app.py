@@ -10,7 +10,7 @@ from classes.marker import Marker
 
 class App:
     MAX_SUELOS = 3
-    Max_Lemmings = 1
+    Max_Lemmings = 15
     lemmings = []
     x = 0
     # MYSIZE: the size of every board's square
@@ -35,14 +35,15 @@ class App:
             for j in range(self.col):
                 cell = Cell(i, j)
                 self.grid[i].append(cell)
-        # for i in range(self.row):
-        #     for j in range(self.col):
-        #         self.grid[i][j].floor = True
-        self.grid[0][12].floor = True
-        self.grid[0][13].floor = True
+
+        for i in range(self.col):
+            if i != 4:
+                self.grid[4][i].floor = True
+
+
         pyxel.run(self.update, self.draw)
 
-    def exist_floor(self,x,y):
+    def exist_floor(self,y,x):
         # for i in self.grid:
         row = int(x / 16)
         col = int(y / 16)
@@ -95,13 +96,15 @@ class App:
         # velocity
         if pyxel.frame_count % 1 == 0:
             for lemming in self.lemmings:
-                # print(lemming.direction)
+                print(lemming.direction)
                 if lemming.y < (self.HEIGHT-16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
+                    lemming.last_direction=lemming.direction
                     lemming.direction="D"
-                else:
-                    lemming.direction="L"
-                if lemming.direction == "R":
+                elif lemming.direction == "D":
+                    lemming.direction="R"
 
+                if lemming.direction == "R":
+                    print("lemming.x: ",lemming.x)
                     if lemming.x > self.WIDTH - 16:
                         lemming.changeDirection()
                 if lemming.direction == "L":

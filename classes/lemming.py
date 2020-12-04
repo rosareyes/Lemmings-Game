@@ -7,6 +7,7 @@ class Lemming:
     # or "left"
     __ascending: bool = False
     __descending: bool = False
+    __last_direction = ""
     __falling: bool = False
     # 0: 0,0 Lemming R
     # 1: 16, 0 Lemming R
@@ -14,8 +15,7 @@ class Lemming:
     # 4: 48, 0 Lemming R
     # 5: 0, 48 Lemming L
     # 6: 16,48 Lemming L
-    # __sprites = [[0, 0], [16, 0], [32, 0], [48, 0], [0, 48], [16, 48], [32, 48], [48, 48]]
-    __sprites = [[5, 7], [22, 7], [37, 7], [54, 6], [6, 55], [22, 55], [37, 55], [53, 54]]
+    __sprites = [[0, 0], [16, 0], [32, 0], [48, 0], [0, 48], [16, 48], [32, 48], [48, 48]]
     __sprite = [[0, 0], [16, 0], [32, 0], [48, 0]]
     __sprite_actual = [0, 0]
 
@@ -73,7 +73,17 @@ class Lemming:
     def direction(self, value):
         self.__direction = value
 
+    @property
+    def last_direction(self):
+        return self.__last_direction
+
+    @last_direction.setter
+    def last_direction(self, value):
+        self.__last_direction = value
+
     def changeDirection(self):
+        if self.__direction == "D":
+            self.__direction = "S"
         if self.__direction == "R":
             self.__direction = "L"
             self.__sprite = [self.__sprites[4], self.__sprites[5],self.__sprites[6],self.__sprites[7]]
@@ -97,11 +107,11 @@ class Lemming:
             self.y+=16
             self.x+=16
 
-        # if self.__direction=="L" or self.__direction=="R":
-        #     self.__index += 1
-        #     if self.__index >= len(self.sprite):
-        #         self.__index = 0
-        #     self.__sprite_actual = self.__sprite[self.index]
+        if self.__direction=="L" or self.__direction=="R":
+            self.__index += 1
+            if self.__index >= len(self.sprite):
+                self.__index = 0
+            self.__sprite_actual = self.__sprite[self.index]
 
     def avanzarR(self):
         self.__coordX += 1
