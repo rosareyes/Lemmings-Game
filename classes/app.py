@@ -9,9 +9,14 @@ from classes.marker import Marker
 
 
 class App:
+    marker = Marker(0, 0, 0, 0, 0, 0, 0)
     MAX_SUELOS = 3
     Max_Lemmings = 15
+    MAX_UMBRELLAS = 5
+    MAX_LADDERS = 5
+    MAX_BLOCKERS = 5
     lemmings = []
+    dead_lemmings_list = []
     x = 0
     # MYSIZE: the size of every board's square
     MYSIZE = 16
@@ -61,8 +66,10 @@ class App:
             if self.sqX - 16 >= 0:
                 self.sqX -= 16
         if pyxel.btnp(pyxel.KEY_DOWN):
+            print(self.sqY)
             if (self.sqY - 32) + 16 <= self.HEIGHT - 16:
                 self.sqY += 16
+
         if pyxel.btnp(pyxel.KEY_UP):
             if (self.sqY - 32) - 16 >= 0:
                 self.sqY -= 16
@@ -73,18 +80,32 @@ class App:
             # (the 32 spaces up are occupied by the board's marker)
             row = int((self.sqY - 32) / 16)
             col = int(self.sqX / 16)
-            print("row: {} col: {}".format(row,col))
-            umbrella = Umbrella(row, col)
-            self.grid[row][col].tool = umbrella
-            print(self.grid[row][col].tool.sprite[1])
-            # Aqui se debe crear un objeto llamado Umbrella y se añade a la variable "tool"
-            print(self.grid[row][col].tool)
+            if self.MAX_UMBRELLAS > 0:
+                #print("row: {} col: {}".format(row,col))
+                umbrella = Umbrella(row, col)
+                self.grid[row][col].tool = umbrella
+                self.marker.umbrellas_value += 1
+                self.MAX_UMBRELLAS -= 1
+                #print(self.grid[row][col].tool.sprite[1])
+                # Aqui se debe crear un objeto llamado Umbrella y se añade a la variable "tool"
+                print(self.grid[row][col].tool)
 
-        if pyxel.btnp(pyxel.KEY_ENTER):
+        # Left Ladder
+        if pyxel.btnp(pyxel.KEY_L):
             row = int((self.sqY - 32) / 16)
             col = int(self.sqX / 16)
-            self.grid[col][row].tool = "l"
-            print(self.grid[col][row].tool)
+            if self.MAX_LADDERS > 0:
+                ladder = Ladder(row, col, "left")
+                self.grid[row][col].tool = ladder
+                print(self.grid[col][row].tool)
+
+        if pyxel.btnp(pyxel.KEY_K):
+            row = int((self.sqY - 32) / 16)
+            col = int(self.sqX / 16)
+            if self.MAX_LADDERS > 0:
+                ladder = Ladder(row, col,"right")
+                self.grid[row][col].tool = ladder
+                print(self.grid[col][row].tool)
 
         # Lemmings
         if pyxel.frame_count % 50 == 0:
@@ -95,43 +116,56 @@ class App:
 
         # velocity
         if pyxel.frame_count % 1 == 0:
-            for lemming in self.lemmings:
-                print(lemming.direction)
+            # This functions is to keep track not only of the lemming object but also it's index
+            # To pop it out the list later
+            for i, lemming in enumerate(self.lemmings):
+                #print(lemming.direction)
                 if lemming.y < (self.HEIGHT-16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
-                    lemming.last_direction=lemming.direction
                     lemming.direction="D"
                 elif lemming.direction == "D":
                     lemming.direction="R"
 
                 if lemming.direction == "R":
-                    print("lemming.x: ",lemming.x)
+                    #print("lemming.x: ",lemming.x)
                     if lemming.x > self.WIDTH - 16:
                         lemming.changeDirection()
                 if lemming.direction == "L":
                     if lemming.x < 0:
                         lemming.changeDirection()
+
+                # muerte lemming
+                if lemming.y == (self.HEIGHT - 16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
+                    print(lemming.y)
+                    print("vivos: ", len(self.lemmings))
+                    lemming.life = False
+                    dead_lemming = self.lemmings.pop(i)
+                    self.dead_lemmings_list.append(dead_lemming)
+                    self.marker.died_value = len(self.dead_lemmings_list)
+                    print("muertos: ", len(self.dead_lemmings_list))
+                #  pyxel.blt(lemming.x,lemming.y,0,lemming.sprite_death,10,79,0) poner imagen lemming muerto
                 lemming.walk()
+            # for i,j in enumerate(self.dead_lemmings_list):
+            #     print(j.life)
 
     def draw(self):
         pyxel.cls(1)
         pyxel.text(100, 0, "Lemmings Game", pyxel.frame_count % 16)
-        marker = Marker(0, 0, 0, 0, 0, 0, 0)
 
         # We are printing here our object marker that has a class of marker with all of the game info
-        pyxel.text(30, 10, "{}".format(marker.level), 7)
-        pyxel.text(55, 10, "{}".format(marker.level_value), 6)
-        pyxel.text(80, 10, "{}".format(marker.alive), 7)
-        pyxel.text(105, 10, "{}".format(marker.alive_value), 6)
-        pyxel.text(130, 10, "{}".format(marker.saved), 7)
-        pyxel.text(155, 10, "{}".format(marker.saved_value), 6)
-        pyxel.text(180, 10, "{}".format(marker.died), 7)
-        pyxel.text(203, 10, "{}".format(marker.died_value), 6)
-        pyxel.text(40, 20, "{}".format(marker.ladders), 7)
-        pyxel.text(75, 20, "{}".format(marker.ladders_value), 6)
-        pyxel.text(90, 20, "{}".format(marker.umbrellas), 7)
-        pyxel.text(132, 20, "{}".format(marker.umbrellas_value), 6)
-        pyxel.text(160, 20, "{}".format(marker.blockers), 7)
-        pyxel.text(200, 20, "{}".format(marker.blockers_value), 6)
+        pyxel.text(30, 10, "{}".format(self.marker.level), 7)
+        pyxel.text(55, 10, "{}".format(self.marker.level_value), 6)
+        pyxel.text(80, 10, "{}".format(self.marker.alive), 7)
+        pyxel.text(105, 10, "{}".format(self.marker.alive_value), 6)
+        pyxel.text(130, 10, "{}".format(self.marker.saved), 7)
+        pyxel.text(155, 10, "{}".format(self.marker.saved_value), 6)
+        pyxel.text(180, 10, "{}".format(self.marker.died), 7)
+        pyxel.text(203, 10, "{}".format(self.marker.died_value), 6)
+        pyxel.text(40, 20, "{}".format(self.marker.ladders), 7)
+        pyxel.text(75, 20, "{}".format(self.marker.ladders_value), 6)
+        pyxel.text(90, 20, "{}".format(self.marker.umbrellas), 7)
+        pyxel.text(132, 20, "{}".format(self.marker.umbrellas_value), 6)
+        pyxel.text(160, 20, "{}".format(self.marker.blockers), 7)
+        pyxel.text(200, 20, "{}".format(self.marker.blockers_value), 6)
 
         # drawing the matrix
         for i in range(self.row):
@@ -142,7 +176,21 @@ class App:
                     #print("{}, {}".format(cell.x * 16, cell.y * 16))
                     pyxel.blt((cell.x * 16), (cell.y * 16) + 44, 0, self.grid[i][j].sprite[0], self.grid[i][j].sprite[1], 16, 4, 0)
                 if cell.tool:
-                    pyxel.blt((cell.x * 16), (cell.y * 16) + 34, 0, self.grid[i][j].tool.sprite[0], self.grid[i][j].tool.sprite[1], 16, 8, 0)
+                    if isinstance(cell.tool, Ladder):
+                        if cell.tool.direction == "left":
+                            print("cell x: ", cell.x)
+                            print("cell y: ",cell.y)
+                            print("sqx: ",self.sqX)
+                            print("sqy: ",self.sqY)
+                            pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[0][0], self.grid[i][j].tool.sprite[0][1], 16, 16, 0)
+                        elif cell.tool.direction == "right":
+                            print("cell x: ", cell.x)
+                            print("cell y: ", cell.y)
+                            print("sqx: ", self.sqX)
+                            print("sqy: ", self.sqY)
+                            pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[1][0], self.grid[i][j].tool.sprite[1][1], 16, 16, 0)
+                    if isinstance(cell.tool, Umbrella):
+                        pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0], self.grid[i][j].tool.sprite[1], 16, 8, 0)
                 # print("i: {}, j: {}".format(i, j))
                 #pyxel.text(cell.x * 16, (cell.y * 16) + 40, cell.text, 3)
         # pyxel.blt(0, 50, 0, self.lemmings[0].lemming.sprite[0][0], self.lemmings[0].lemming.sprite[0][1], 16, 16, 0)

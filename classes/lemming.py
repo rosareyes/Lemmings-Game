@@ -74,12 +74,12 @@ class Lemming:
         self.__direction = value
 
     @property
-    def last_direction(self):
-        return self.__last_direction
+    def life(self):
+        return self.__life
 
-    @last_direction.setter
-    def last_direction(self, value):
-        self.__last_direction = value
+    @life.setter
+    def life(self, value):
+        self.__life = value
 
     def changeDirection(self):
         if self.__direction == "D":
