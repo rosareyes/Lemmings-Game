@@ -191,7 +191,6 @@ class App:
                             pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[1][0], self.grid[i][j].tool.sprite[1][1], 16, 16, 0)
                     if isinstance(cell.tool, Umbrella):
                         pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0], self.grid[i][j].tool.sprite[1], 16, 8, 0)
-                # print("i: {}, j: {}".format(i, j))
                 #pyxel.text(cell.x * 16, (cell.y * 16) + 40, cell.text, 3)
         # pyxel.blt(0, 50, 0, self.lemmings[0].lemming.sprite[0][0], self.lemmings[0].lemming.sprite[0][1], 16, 16, 0)
         pyxel.rectb(self.sqX, self.sqY, 16, 16, 13)
