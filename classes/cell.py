@@ -3,7 +3,7 @@ class Cell:
     __sprite = [0, 28]
     __floor: bool = False
     __tool: object = None
-    __text = "s"
+    __gate: object = None
 
     #__container = [""]  # ["p", "Umbrella"]
     # len = no hay platform
@@ -69,3 +69,11 @@ class Cell:
     @tool.setter
     def tool(self, value):
         self.__tool = value
+
+    @property
+    def gate(self):
+        return self.__gate
+
+    @gate.setter
+    def gate(self, value):
+        self.__gate = value

@@ -1,9 +1,9 @@
 class Lemming:
     __index: int = 0
-    __coordX: int = 0
-    __coordY: int = 0
+    __coordX: int
+    __coordY: int
     __life: bool = True
-    __direction: str = "R"
+    __direction: str
     # or "left"
     __ascending: bool = False
     __descending: bool = False
@@ -92,6 +92,14 @@ class Lemming:
         self.__direction = value
 
     @property
+    def last_direction(self):
+        return self.__last_direction
+
+    @last_direction.setter
+    def last_direction(self, value):
+        self.__last_direction = value
+
+    @property
     def life(self):
         return self.__life
 
@@ -115,12 +123,12 @@ class Lemming:
             self.__coordX += 1
             #print("Entro a walk R, mi coord X: ", self.__coordX)
         elif self.__direction == "L":
-            print("Coord X: ",self.__coordX)
+            #print("Coord X: ",self.__coordX)
             self.__coordX -= 1
         elif self.__direction == "D":
             if self.falling:
                 self.__sprite_actual = self.__sprites[8]
-                print("elif direction: ", self.__sprite_actual)
+                #print("elif direction: ", self.__sprite_actual)
             self.__coordY+=1
         elif self.__direction=="UR":
             # print("entro aqui")
