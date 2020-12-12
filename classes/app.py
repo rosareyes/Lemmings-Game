@@ -11,7 +11,7 @@ from classes.marker import Marker
 class App:
     marker = Marker(0, 0, 0, 0, 0, 0, 0)
     MAX_SUELOS = 3
-    Max_Lemmings = 15
+    Max_Lemmings = 1
     MAX_UMBRELLAS = 5
     MAX_LADDERS = 5
     MAX_BLOCKERS = 5
@@ -43,8 +43,10 @@ class App:
 
         for i in range(self.col):
             if i != 4:
-                self.grid[4][i].floor = True
+                self.grid[2][i].floor = True
 
+        self.grid[1][4].floor = True
+        self.grid[2][3].tool = Ladder(0,0,"right")
 
         pyxel.run(self.update, self.draw)
 
@@ -54,6 +56,22 @@ class App:
         col = int(y / 16)
         if self.grid[row][col].floor:
             return True
+
+    def have_umbrella(self,x,y):
+        row = int(y / 16)
+        col = int(x / 16)
+        if isinstance(self.grid[row][col].tool, Umbrella):
+            return True
+        else:
+            return False
+    def have_ladder(self,x,y):
+        row = int(y / 16)
+        col = int(x / 16)
+        if isinstance(self.grid[row][col].tool, Ladder):
+            return True
+        else:
+            return False
+
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
@@ -97,7 +115,6 @@ class App:
             if self.MAX_LADDERS > 0:
                 ladder = Ladder(row, col, "left")
                 self.grid[row][col].tool = ladder
-                print(self.grid[col][row].tool)
 
         if pyxel.btnp(pyxel.KEY_K):
             row = int((self.sqY - 32) / 16)
@@ -119,15 +136,38 @@ class App:
             # This functions is to keep track not only of the lemming object but also it's index
             # To pop it out the list later
             for i, lemming in enumerate(self.lemmings):
-                #print(lemming.direction)
+
+                if self.have_ladder(int(lemming.x), int(lemming.y)):
+                    lemming.ascending = True
+                    if lemming.direction == "R":
+                        lemming.direction = "UR"
+                    elif lemming.direction == "L":
+                        lemming.direction = "UL"
+                elif self.exist_floor(int(lemming.x), int(lemming.y)) and lemming.direction == "UR":
+                    lemming.direction = "R"
+                elif self.exist_floor(int(lemming.x), int(lemming.y)) and lemming.direction == "UL":
+                    lemming.direction = "L"
+
+
+
                 if lemming.y < (self.HEIGHT-16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
+                    print(int(lemming.x), int(lemming.y))
+                    print(self.exist_floor(int(lemming.x), int(lemming.y)))
+                    if lemming.direction == "L":
+                        lemming.x -= 4
                     lemming.direction="D"
+
+                    if self.have_umbrella(int(lemming.x), int(lemming.y)):
+                        lemming.falling=True
                 elif lemming.direction == "D":
+                    lemming.falling=False
                     lemming.direction="R"
+
 
                 if lemming.direction == "R":
                     #print("lemming.x: ",lemming.x)
-                    if lemming.x > self.WIDTH - 16:
+                    if lemming.x > self.WIDTH - 6:
+                        print("lemming x: ", lemming.x)
                         lemming.changeDirection()
                 if lemming.direction == "L":
                     if lemming.x < 0:
@@ -135,7 +175,7 @@ class App:
 
                 # muerte lemming
                 if lemming.y == (self.HEIGHT - 16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
-                    print(lemming.y)
+                    print((lemming.x)/16)
                     print("vivos: ", len(self.lemmings))
                     lemming.life = False
                     dead_lemming = self.lemmings.pop(i)
@@ -178,16 +218,8 @@ class App:
                 if cell.tool:
                     if isinstance(cell.tool, Ladder):
                         if cell.tool.direction == "left":
-                            print("cell x: ", cell.x)
-                            print("cell y: ",cell.y)
-                            print("sqx: ",self.sqX)
-                            print("sqy: ",self.sqY)
                             pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[0][0], self.grid[i][j].tool.sprite[0][1], 16, 16, 0)
                         elif cell.tool.direction == "right":
-                            print("cell x: ", cell.x)
-                            print("cell y: ", cell.y)
-                            print("sqx: ", self.sqX)
-                            print("sqy: ", self.sqY)
                             pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[1][0], self.grid[i][j].tool.sprite[1][1], 16, 16, 0)
                     if isinstance(cell.tool, Umbrella):
                         pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0], self.grid[i][j].tool.sprite[1], 16, 8, 0)
@@ -196,5 +228,8 @@ class App:
         pyxel.rectb(self.sqX, self.sqY, 16, 16, 13)
 
         for lemming in self.lemmings:
-            pyxel.blt(lemming.x,lemming.y+28,0,lemming.sprite_actual[0],lemming.sprite_actual[1],16,16,0)
+            if lemming.falling == True:
+                pyxel.blt(lemming.x,lemming.y+28,0,lemming.sprite_actual[0],lemming.sprite_actual[1],16,16,0)
+            else:
+                pyxel.blt(lemming.x,lemming.y+28,0,lemming.sprite_actual[0],lemming.sprite_actual[1],6,16,0)
 
