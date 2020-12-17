@@ -1,10 +1,18 @@
 class Ladder:
+    """ Class for tool: Ladder.
+
+    Attributes:
+        coordX (int): Coordinate for the columns.
+        coordY (int): Coordinate for the rows.
+        isActive (bool): keeps track if the tool has been activated by a lemming.
+        sprite (list): list of object's image coordinates into the /assets/lemming.pyxres
+            it contains both sprites for left and right ladders. size 16 x 16
+            [0]: left
+            [1]: right
+        direction (str): it tells whether the object created is a right or a left ladder.
+    """
     __coordX: int = 0
     __coordY: int = 0
-    appearing: bool = False
-    # [0]: left
-    # [1]: right
-    # size 16 x 16
     __sprite: list = [[16,16], [32,16]]
     isActive: bool = True
     __direction: str = "right"

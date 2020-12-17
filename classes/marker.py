@@ -110,5 +110,5 @@ class Marker:
         return self.__blockers_value
 
     @blockers_value.setter
-    def level_value(self, value):
+    def blockers_value(self, value):
         self.__blockers_value = value

@@ -1,13 +1,20 @@
 class Gate:
+    """ Class for Gate.
+
+    Attributes:
+        coordX (int): Coordinate for the columns.
+        coordY (int): Coordinate for the rows.
+        isActive (bool): keeps track if the tool has been activated by a lemming.
+        __sprites (list): list of object's image coordinates into the /assets/lemming.pyxres
+            it contains both sprites for entry and exit gates.
+            [0]: exit
+            [1]: entry
+        __isEntry (bool): keeps track whether the object created is an entry gate or an exit gate.
+    """
     __coordX: int = 0
     __coordY: int = 0
-    # 0: exit
-    # 1: entry
-    __sprites = [[32,32],[16,32]]
-    # To ask: when Lemmings go into Exit Gate,
-    # does it need to have an Active atribute to know
-    # when Lemmings reach it?
     __isActive: bool = True
+    __sprites = [[32, 32], [16, 32]]
     __isEntry: bool = False
 
     def __init__(self, y, x, entry):

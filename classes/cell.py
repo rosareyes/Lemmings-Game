@@ -1,41 +1,38 @@
 class Cell:
-    __cx, __cy = 0, 0
+    """ Class for Cell: every element in the grid matrix (App.py)
+        is made of a object with the Cell class.
+
+    Attributes:
+        coordX (int): Coordinate for the columns.
+        coordY (int): Coordinate for the rows.
+        isActive (bool): keeps track if the tool has been activated by a lemming.
+        __sprite (list): list of object's image coordinates into the /assets/lemming.pyxres
+    """
+    __coordX, __coordY = 0, 0
     __sprite = [0, 28]
     __floor: bool = False
     __tool: object = None
     __gate: object = None
 
-    #__container = [""]  # ["p", "Umbrella"]
-    # len = no hay platform
-    # 1 = hay platform
-
     def __init__(self, y, x):
-        self.__cx = x
-        self.__cy = y
+        self.__coordX = x
+        self.__coordY = y
 
     @property
     def x(self):
-        return self.__cx
+        return self.__coordX
 
     @x.setter
     def x(self, value):
-        self.__cx = value
-
-    @property
-    def text(self):
-        return self.__text
-
-    @text.setter
-    def text(self, value):
-        self.__text = value
+        self.__coordX = value
 
     @property
     def y(self):
-        return self.__cy
+        return self.__coordY
 
     @y.setter
     def y(self, value):
-        self.__cy = value
+        self.__coordY = value
 
     @property
     def sprite(self):
@@ -44,15 +41,6 @@ class Cell:
     @sprite.setter
     def sprite(self, value):
         self.__sprite = value
-
-    # @property
-    # def container(self):
-    #     return self.__container
-    #
-    #
-    # @container.setter
-    # def container(self, value):
-    #     self.__container[0] = value
 
     @property
     def floor(self):

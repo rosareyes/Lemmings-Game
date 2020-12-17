@@ -1,22 +1,32 @@
 class Lemming:
+    """ Class for Lemming.
+
+     Attributes:
+         coordX (int): Coordinate for the columns.
+         coordY (int): Coordinate for the rows.
+         sprites (list): list of object's image coordinates into the /assets/lemming.pyxres
+            [0-3]: right lemming movement
+            [4-7]: left lemming movement
+            [8]: lemming with umbrella
+        sprite (list): saves only the sprites' coords of the lemmings' movement in that momement (left or right set)
+        sprite_actual (list): has the coords of the actual sprite.
+        index (int): allows to change the sprites and make the animation.
+        life (bool): tells whether the lemming is dead or alive.
+        direction (str): keeps track of the lemmings' direction.
+        last_direction (str):  a variable that saves the last direction of the lemming before it goes down.
+        falling (bool): tells wether the lemming is falling with an umbrella or no.
+
+     """
     __index: int = 0
     __coordX: int
     __coordY: int
     __life: bool = True
     __direction: str
-    # or "left"
     __ascending: bool = False
     __descending: bool = False
     __last_direction = ""
     __falling: bool = False
-    # 0: 0,0 Lemming R
-    # 1: 16, 0 Lemming R
-    # 3: 32, 0 Lemming R
-    # 4: 48, 0 Lemming R
-    # 5: 0, 48 Lemming L
-    # 6: 16,48 Lemming L
     # __sprites = [[0, 0], [16, 0], [32, 0], [48, 0], [0, 48], [16, 48], [32, 48], [48, 48],[16,64]]
-
     __sprites = [[5, 0], [21, 0], [37, 0], [53, 0], [5, 48], [21, 48], [37, 48], [53, 48],[16,64]]
     __sprite = [[5, 0], [21, 0], [37, 0], [53, 0]]
     __sprite_actual = [5, 0]

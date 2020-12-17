@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pyxel
 from classes.lemming import Lemming
 from classes.cell import Cell
@@ -9,11 +11,36 @@ from classes.marker import Marker
 
 
 class App:
+    """ Main class where all the logic game is executed.
+
+    Attributes:
+        entry_gate (obj):
+        exit_gate (obj):
+        marker (obj):
+        Max_Lemmings (const): maximum number of lemmings.
+        MAX_UMBRELLAS (const): maximum number of umbrellas.
+        MAX_LADDERS (const): maximum number of ladders.
+        MAX_BLOCKERS (const): maximum number of blockers.
+        lemmings (list): list of lemmings generated.
+        dead_lemmings_list (list): list of dead lemmings.
+        saved_lemmings (list): list of saved lemmings.
+        x (obj):
+        # MYSIZE: the size of every board's square
+        MYSIZE (const): the size of every board's square
+        sqX, sqY (int): Cursor's coords to select a cell
+        GAME_WIDTH, GAME_HEIGHT (const): size of the whole game window.
+        WIDTH, HEIGHT (const): size of the game board where the cells are located.
+        grid (nested list): this is the matrix where the game is executed.
+        color (const): is the color of the background.
+        row = (int): the number of rows that the grid has.
+        col = (int): the number of cols that the grid has.
+        platforms = (list): list of 7 platforms randomly generated.
+
+    """
     entry_gate = Gate(6,7,True)
     exit_gate = Gate(12,14,False)
     marker = Marker(0, 0, 0, 0, 0, 0, 0)
-    MAX_SUELOS = 3
-    Max_Lemmings = 15
+    Max_Lemmings = 5
     MAX_UMBRELLAS = 5
     MAX_LADDERS = 5
     MAX_BLOCKERS = 5
@@ -29,17 +56,16 @@ class App:
     WIDTH, HEIGHT = 256, 224
     grid = []
     color = 3
-    last_direction = ""
-    # we add 16 in order for the matrix to draw all of it
-    # bc for some reason the last one of the row doesn't get drawn
     row = int(HEIGHT / 16) # 14
     col = int(WIDTH / 16) # 16
-    platforms = [[5,2,0],[7,4,5],[10,6,6],[9,8,0],[5,10,8],[5,12,3],[6,12,10]]
+    platforms = [[5,2,0],[4,5,7],[10,6,6],[1,8,0],[5,10,8],[5,12,3],[6,12,10]]
     # platforms = [[5,2,0],[7,4,5],[10,6,6],[9,8,0],[5,10,8],[5,12,6],[6,12,10]]
 
     def __init__(self):
+
         pyxel.init(self.GAME_WIDTH, self.GAME_HEIGHT, caption="Lemmings' Game")
         pyxel.load("../assets/lemming.pyxres")
+
         # create matrix
         for i in range(self.row):
             self.grid.append([])
@@ -48,7 +74,6 @@ class App:
                 self.grid[i].append(cell)
 
         for platform in self.platforms:
-            #print(platform[0])
             for i in range(platform[0]):
                 # print("Y: ",platform[1])
                 # print("X: ", platform[2]+i)
@@ -99,6 +124,14 @@ class App:
         else:
             return False
 
+    def have_blocker(self, x, y):
+        row = int(y / 16)
+        col = int(x / 16)
+        if isinstance(self.grid[row][col].tool, Blocker):
+            print("I have a blocker! x: {} y: {}".format(col,row))
+            return True
+        else:
+            return False
 
     def update(self):
         if pyxel.btnp(pyxel.KEY_Q):
@@ -145,17 +178,49 @@ class App:
         if pyxel.btnp(pyxel.KEY_L):
             row = int((self.sqY - 32) / 16)
             col = int(self.sqX / 16)
-            if self.MAX_LADDERS > 0:
+            instancia = isinstance(self.grid[row][col].tool, Ladder)
+            if instancia:
+                self.grid[row][col].tool = None
+                self.MAX_LADDERS += 1
+                self.marker.ladders_value -= 1
+            if self.MAX_LADDERS > 0 and not instancia:
                 ladder = Ladder(row, col, "left")
                 self.grid[row][col].tool = ladder
+                self.marker.ladders_value += 1
+                self.MAX_LADDERS -= 1
+                print(self.grid[row][col].tool)
 
+        # Right Ladder
         if pyxel.btnp(pyxel.KEY_K):
             row = int((self.sqY - 32) / 16)
             col = int(self.sqX / 16)
-            if self.MAX_LADDERS > 0:
-                ladder = Ladder(row, col,"right")
+            instancia = isinstance(self.grid[row][col].tool, Ladder)
+            if instancia:
+                self.grid[row][col].tool = None
+                self.MAX_LADDERS += 1
+                self.marker.ladders_value -= 1
+            if self.MAX_LADDERS > 0 and not instancia:
+                ladder = Ladder(row, col, "right")
+                print(row, col)
                 self.grid[row][col].tool = ladder
+                self.marker.ladders_value += 1
+                self.MAX_LADDERS -= 1
                 print(self.grid[col][row].tool)
+        # Blocker
+        if pyxel.btnp(pyxel.KEY_B):
+            row = int((self.sqY - 32) / 16)
+            col = int(self.sqX / 16)
+            instancia = isinstance(self.grid[row][col].tool, Blocker)
+            if instancia:
+                self.grid[row][col].tool = None
+                self.MAX_BLOCKERS += 1
+                self.marker.blockers_value -= 1
+            if self.MAX_BLOCKERS > 0 and not instancia and self.exist_floor(col*16,row*16):
+                blocker = Blocker(row, col)
+                self.grid[row][col].tool = blocker
+                self.marker.blockers_value += 1
+                self.MAX_BLOCKERS -= 1
+                print(self.grid[row][col].tool)
 
         # Lemmings
         if pyxel.frame_count % 50 == 0:
@@ -165,25 +230,28 @@ class App:
                 self.Max_Lemmings -= 1
                 self.marker.alive_value +=1
 
-        # velocity
+        # the frame count reduces the speed of the lemmings' movement
         if pyxel.frame_count % 1 == 0:
 
             # This functions is to keep track not only of the lemming object but also it's index
             # To pop it out the list later
             for i, lemming in enumerate(self.lemmings):
-
                 if self.have_ladder(int(lemming.x), int(lemming.y)):
-                    lemming.ascending = True
-                    if lemming.direction == "R":
+                    lemming.ascending = False
+                    # if the lemming is going right and the ladder is for the left, it will ignore it and viceversa.
+                    if lemming.direction == "R" and self.grid[int(lemming.y/16)][int(lemming.x/16)].tool.direction == "right":
                         lemming.direction = "UR"
-                    elif lemming.direction == "L":
+                    elif lemming.direction == "L" and self.grid[int(lemming.y/16)][int(lemming.x/16)].tool.direction == "left":
                         lemming.direction = "UL"
                 elif self.exist_floor(int(lemming.x), int(lemming.y)) and lemming.direction == "UR":
+                    lemming.ascending = False
                     lemming.direction = "R"
 
                 elif self.exist_floor(int(lemming.x), int(lemming.y)) and lemming.direction == "UL":
+                    lemming.ascending = False
                     lemming.direction = "L"
-
+                if self.have_blocker(int(lemming.x), int(lemming.y)):
+                    lemming.changeDirection()
 
                 if lemming.y < (self.HEIGHT-16) and not self.exist_floor(int(lemming.x), int(lemming.y)):
                     # print(int(lemming.x), int(lemming.y))
@@ -205,9 +273,8 @@ class App:
                 if lemming.direction == "R":
                     if lemming.direction != "D":
                         lemming.last_direction = lemming.direction
-                    #print("lemming.x: ",lemming.x)
-                    if lemming.x > self.WIDTH - 6:
-                        #print("lemming x: ", lemming.x)
+                    if lemming.x >= self.WIDTH - 6:
+                        print("lemming x: ", lemming.x)
                         lemming.changeDirection()
 
                 if lemming.direction == "L":
@@ -215,6 +282,8 @@ class App:
                         lemming.last_direction = lemming.direction
                     if lemming.x < 0:
                         lemming.changeDirection()
+
+
 
                 # saved lemmings
                 if self.exist_exit_gate(int(lemming.x), int(lemming.y)):
@@ -233,7 +302,7 @@ class App:
 
                     print("muertos: ", len(self.dead_lemmings_list))
                 #  pyxel.blt(lemming.x,lemming.y,0,lemming.sprite_death,10,79,0) poner imagen lemming muerto
-                print("last direction: ", lemming.last_direction)
+                #print("last direction: ", lemming.last_direction)
                 lemming.walk()
 
 
@@ -273,6 +342,9 @@ class App:
                             pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[1][0], self.grid[i][j].tool.sprite[1][1], 16, 16, 0)
                     if isinstance(cell.tool, Umbrella):
                         pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0], self.grid[i][j].tool.sprite[1], 16, 8, 0)
+                    if isinstance(cell.tool, Blocker):
+                        pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0],
+                                  self.grid[i][j].tool.sprite[1], 16, 12, 0)
                 if cell.gate:
                     if cell.gate.is_entry:
                         pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].gate.sprites[1][0],self.grid[i][j].gate.sprites[1][1], 16, 12, 0)
@@ -285,9 +357,16 @@ class App:
         for lemming in self.lemmings:
             if lemming.falling:
                 if lemming.last_direction == "L":
+                    print("entreeee")
                     pyxel.blt(lemming.x - 12, lemming.y + 28, 0, lemming.sprite_actual[0], lemming.sprite_actual[1], 16, 16,0)
                 else:
                     pyxel.blt(lemming.x,lemming.y+28,0,lemming.sprite_actual[0],lemming.sprite_actual[1],16,16,0)
             else:
                 pyxel.blt(lemming.x,lemming.y+28,0,lemming.sprite_actual[0],lemming.sprite_actual[1],6,16,0)
 
+        # To draw the blood when a lemming dies.
+        for dead_lemming in self.dead_lemmings_list:
+            if self.exist_floor(dead_lemming.x, dead_lemming.y):
+                pyxel.blt(dead_lemming.x, dead_lemming.y + 42, 0, 0, 74, 16, 6, 0)
+            else:
+                pyxel.blt(dead_lemming.x, dead_lemming.y + 46, 0, 0, 74, 16, 6, 0)
