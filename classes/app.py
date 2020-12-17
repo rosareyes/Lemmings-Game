@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pyxel
+import random
 from classes.lemming import Lemming
 from classes.cell import Cell
 from classes.umbrella import Umbrella
@@ -40,7 +41,7 @@ class App:
     entry_gate = Gate(6,7,True)
     exit_gate = Gate(12,14,False)
     marker = Marker(0, 0, 0, 0, 0, 0, 0)
-    Max_Lemmings = 5
+    Max_Lemmings = 20
     MAX_UMBRELLAS = 5
     MAX_LADDERS = 5
     MAX_BLOCKERS = 5
@@ -58,8 +59,10 @@ class App:
     color = 3
     row = int(HEIGHT / 16) # 14
     col = int(WIDTH / 16) # 16
-    platforms = [[5,2,0],[4,5,7],[10,6,6],[1,8,0],[5,10,8],[5,12,3],[6,12,10]]
+    # platforms = [[5, 2, 0], [7, 4, 5], [10, 6, 6], [9, 8, 0], [5, 10, 8], [5, 12, 3], [6, 12, 10]]
     # platforms = [[5,2,0],[7,4,5],[10,6,6],[9,8,0],[5,10,8],[5,12,6],[6,12,10]]
+    platforms = []
+    not_floor = True
 
     def __init__(self):
 
@@ -73,23 +76,65 @@ class App:
                 cell = Cell(i, j)
                 self.grid[i].append(cell)
 
+        # # Creating the platform list random with validations
+        y = 0
+        for i in range(0, 7):
+            repeated = True
+            width = random.randint(5,10)
+            while repeated:
+                y = random.randint(0, 12)
+                y_list = []
+                if self.platforms:
+                    for platform in self.platforms:
+                        y_list.append(platform[1])
+                    if y in y_list:
+                        repeated = True
+                    else:
+                        repeated = False
+                else:
+                    repeated = False
+                    # print("aqui entro una vez")
+                # print(y_list)
+            xrepeated = True
+            while xrepeated:
+                x = random.randint(0,11)
+                if x + width >= 16:
+                    xrepeated = True
+                else:
+                    xrepeated = False
+            self.platforms.append([width,y,x])
+
+        print(self.platforms)
+
+        # adding the platforms into the cells
         for platform in self.platforms:
             for i in range(platform[0]):
                 # print("Y: ",platform[1])
                 # print("X: ", platform[2]+i)
                 self.grid[platform[1]][platform[2]+i].floor = True
 
-        self.grid[self.entry_gate.y][self.entry_gate.x].gate = self.entry_gate
-        self.grid[self.exit_gate.y][self.exit_gate.x].gate = self.exit_gate
+        # # create exit door random
+        while self.not_floor:
+            y = random.randint(0,13)
+            x = random.randint(0,15)
+            if self.exist_floor(x*16, y*16):
+                self.entry_gate = Gate(y,x,True)
+                self.grid[y][x].gate = self.exit_gate
+                self.not_floor = False
+            else:
+                self.not_floor = True
 
-        # for i in range(self.col):
-        #     if i != 4:
-        #         self.grid[2][i].floor = True
-        # for i in range(self.col):
-        #     self.grid[3][i].floor = True
-
-        # self.grid[1][4].floor = True
-        # self.grid[2][3].tool = Ladder(0,0,"right")
+        # create entry door random
+        self.not_floor = True
+        while self.not_floor:
+            y = random.randint(0,13)
+            x = random.randint(0,15)
+            if self.exist_floor(x*16, y*16) and not self.exist_exit_gate(x*16, y*16):
+                self.entry_gate = Gate(y,x,True)
+                self.grid[y][x].gate = self.entry_gate
+                self.not_floor = False
+            else:
+                self.not_floor = True
 
         pyxel.run(self.update, self.draw)
 
