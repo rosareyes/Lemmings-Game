@@ -43,10 +43,10 @@ class App:
     exit_gate: object = None
     marker: object = None
     Max_Lemmings: int
-    MAX_UMBRELLAS = 5
+    MAX_UMBRELLAS: int
     lemmings_amount: int
-    MAX_LADDERS = 5
-    MAX_BLOCKERS = 5
+    MAX_LADDERS: int
+    MAX_BLOCKERS: int
     lemmings = []
     dead_lemmings_list = []
     saved_lemmings = []
@@ -69,7 +69,10 @@ class App:
 
     def reset(self):
         """Initiate key variables"""
-        self.Max_Lemmings = 5
+        self.MAX_UMBRELLAS = 5
+        self.MAX_BLOCKERS = 5
+        self.MAX_LADDERS = 8
+        self.Max_Lemmings = 15
         self.not_floor = True
         self.platforms = []
         self.grid = []
