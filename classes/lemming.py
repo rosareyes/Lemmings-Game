@@ -16,7 +16,10 @@ class Lemming:
         last_direction (str):  a variable that saves the last direction of the lemming before it goes down.
         falling (bool): tells wether the lemming is falling with an umbrella or no.
 
+    UR: upstairs right
+    UL: upstairs left
      """
+
     __index: int = 0
     __coordX: int
     __coordY: int
@@ -26,8 +29,7 @@ class Lemming:
     __descending: bool = False
     __last_direction = ""
     __falling: bool = False
-    # __sprites = [[0, 0], [16, 0], [32, 0], [48, 0], [0, 48], [16, 48], [32, 48], [48, 48],[16,64]]
-    __sprites = [[5, 0], [21, 0], [37, 0], [53, 0], [5, 48], [21, 48], [37, 48], [53, 48],[16,64]]
+    __sprites = [[5, 0], [21, 0], [37, 0], [53, 0], [5, 48], [21, 48], [37, 48], [53, 48], [16, 64]]
     __sprite = [[5, 0], [21, 0], [37, 0], [53, 0]]
     __sprite_actual = [5, 0]
 
@@ -116,49 +118,35 @@ class Lemming:
     @life.setter
     def life(self, value):
         self.__life = value
-# UR: upstairs right
-    def changeDirection(self):
+
+    def change_direction(self):
         if self.__direction == "D":
             self.__direction = "S"
         if self.__direction == "R" or self.__direction == "UR":
             self.__direction = "L"
             self.__coordX -= 1
-            self.__sprite = [self.__sprites[4], self.__sprites[5],self.__sprites[6],self.__sprites[7]]
+            self.__sprite = [self.__sprites[4], self.__sprites[5], self.__sprites[6], self.__sprites[7]]
         else:
             self.__direction = "R"
-            self.sprite = [self.__sprites[0], self.__sprites[1],self.__sprites[2],self.__sprites[3]]
+            self.sprite = [self.__sprites[0], self.__sprites[1], self.__sprites[2], self.__sprites[3]]
 
     def walk(self):
         if self.__direction == "R":
             self.__coordX += 1
-            #print("Entro a walk R, mi coord X: ", self.__coordX)
         elif self.__direction == "L":
-            #print("Coord X: ",self.__coordX)
             self.__coordX -= 1
         elif self.__direction == "D":
             if self.falling:
                 self.__sprite_actual = self.__sprites[8]
-                #print("elif direction: ", self.__sprite_actual)
-            self.__coordY+=1
-        elif self.__direction=="UR":
-            # print("entro aqui")
-            # print("y: ",self.__coordY)
-            # print("x: ", self.__coordX)
-            self.__coordX+=16
-            self.__coordY-=16
-            # self.__coordX+=2
-        elif self.__direction=="UL":
-            # print("entro aqui")
-            # print("y: ",self.__coordY)
-            # print("x: ", self.__coordX)
-            self.__coordX-=16
-            self.__coordY-=16
-            # self.__coordX+=2
-        elif self.__direction=="DS":
-            self.y+=8
-            self.x+=8
+            self.__coordY += 1
+        elif self.__direction == "UR":
+            self.__coordX += 16
+            self.__coordY -= 16
+        elif self.__direction == "UL":
+            self.__coordX -= 16
+            self.__coordY -= 16
 
-        if self.__direction=="L" or self.__direction=="R" or self.__direction=="UR":
+        if self.__direction == "L" or self.__direction == "R" or self.__direction == "UR":
             self.__index += 1
             if self.__index >= len(self.sprite):
                 self.__index = 0
