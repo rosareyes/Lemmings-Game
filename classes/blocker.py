@@ -8,11 +8,11 @@ class Blocker:
         __sprite (list): list of object's image coordinates into the /assets/lemming.pyxres
     """
 
-    coordX: int = 0
-    coordY: int = 0
-    appearing: bool = False
-    isActive: bool = True
-    __sprite: list = [0,16]
+    __coordX: int = 0
+    __coordY: int = 0
+    __appearing: bool = False
+    __isActive: bool = False
+    __sprite: list = [[0,16],[16,80]]
 
     def __init__(self, x, y):
         self.__coordX = x
@@ -42,3 +42,10 @@ class Blocker:
     def sprite(self, value):
         self.__sprite = value
 
+    @property
+    def is_active(self):
+        return self.__isActive
+
+    @is_active.setter
+    def is_active(self, value):
+        self.__isActive = value

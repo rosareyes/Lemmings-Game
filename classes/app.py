@@ -226,9 +226,6 @@ class App:
                 self.grid[row][col].tool = umbrella
                 self.marker.umbrellas_value += 1
                 self.MAX_UMBRELLAS -= 1
-                # print(self.grid[row][col].tool.sprite[1])
-                # Aqui se debe crear un objeto llamado Umbrella y se añade a la variable "tool"
-                print(self.grid[row][col].tool)
 
         # Left Ladder
         if pyxel.btnp(pyxel.KEY_L):
@@ -244,7 +241,6 @@ class App:
                 self.grid[row][col].tool = ladder
                 self.marker.ladders_value += 1
                 self.MAX_LADDERS -= 1
-                print(self.grid[row][col].tool)
 
         # Right Ladder
         if pyxel.btnp(pyxel.KEY_K):
@@ -257,11 +253,10 @@ class App:
                 self.marker.ladders_value -= 1
             if self.MAX_LADDERS > 0 and not instance:
                 ladder = Ladder(row, col, "right")
-                print(row, col)
                 self.grid[row][col].tool = ladder
                 self.marker.ladders_value += 1
                 self.MAX_LADDERS -= 1
-                print(self.grid[col][row].tool)
+
         # Blocker
         if pyxel.btnp(pyxel.KEY_B):
             row = int((self.sqY - 32) / 16)
@@ -276,7 +271,6 @@ class App:
                 self.grid[row][col].tool = blocker
                 self.marker.blockers_value += 1
                 self.MAX_BLOCKERS -= 1
-                print(self.grid[row][col].tool)
 
         """Determinate whether the game is over or the user is going to the next level"""
         if not self.lemmings and self.marker.died_value == self.lemmings_amount:
@@ -300,6 +294,8 @@ class App:
             """
             for i, lemming in enumerate(self.lemmings):
                 if self.have_ladder(int(lemming.x), int(lemming.y)) and self.exist_floor(int(lemming.x), int(lemming.y)):
+                    if not self.grid[int(lemming.y/16)][int(lemming.x/16)].tool.is_active:
+                        self.grid[int(lemming.y / 16)][int(lemming.x / 16)].tool.is_active = True
                     lemming.ascending = False
                     """if the lemming is going right and the ladder is for the left, it will ignore it and vice versa"""
                     if lemming.direction == "R" and self.grid[int(lemming.y / 16)][
@@ -316,6 +312,8 @@ class App:
                     lemming.direction = "L"
 
                 if self.have_blocker(int(lemming.x), int(lemming.y)):
+                    if not self.grid[int(lemming.y/16)][int(lemming.x/16)].tool.is_active:
+                        self.grid[int(lemming.y / 16)][int(lemming.x / 16)].tool.is_active = True
                     lemming.change_direction()
                 """If the cell doesn't have a ladder and doesn't have floor, it will change direction"""
                 if lemming.y < (self.HEIGHT - 16) and not self.exist_floor(int(lemming.x), int(lemming.y)) and not self.have_ladder(int(lemming.x), int(lemming.y)):
@@ -324,6 +322,8 @@ class App:
                     lemming.direction = "D"
                     """If our lemming touches an umbrella, its falling attribute is set to true"""
                     if self.have_umbrella(int(lemming.x), int(lemming.y)):
+                        if not self.grid[int(lemming.y / 16)][int(lemming.x / 16)].tool.is_active:
+                            self.grid[int(lemming.y / 16)][int(lemming.x / 16)].tool.is_active = True
                         lemming.falling = True
                 elif lemming.direction == "D" and lemming.falling:
                     lemming.falling = False
@@ -399,17 +399,33 @@ class App:
                     if cell.tool:
                         if isinstance(cell.tool, Ladder):
                             if cell.tool.direction == "left":
-                                pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[0][0],
-                                          self.grid[i][j].tool.sprite[0][1], 16, 16, 0)
+                                if cell.tool.is_active:
+                                    pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[0][0],
+                                              self.grid[i][j].tool.sprite[0][1], 16, 16, 0)
+                                else:
+                                    pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[2][0],
+                                              self.grid[i][j].tool.sprite[2][1], 16, 16, 0)
                             elif cell.tool.direction == "right":
-                                pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[1][0],
-                                          self.grid[i][j].tool.sprite[1][1], 16, 16, 0)
+                                if cell.tool.is_active:
+                                    pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[1][0],
+                                              self.grid[i][j].tool.sprite[1][1], 16, 16, 0)
+                                else:
+                                    pyxel.blt((cell.x * 16), (cell.y * 16) + 28, 0, self.grid[i][j].tool.sprite[3][0],
+                                              self.grid[i][j].tool.sprite[3][1], 16, 16, 0)
                         if isinstance(cell.tool, Umbrella):
-                            pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0],
-                                      self.grid[i][j].tool.sprite[1], 16, 8, 0)
+                            if cell.tool.is_active:
+                                pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0][0],
+                                          self.grid[i][j].tool.sprite[0][1], 16, 8, 0)
+                            else:
+                                pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[1][0],
+                                          self.grid[i][j].tool.sprite[1][1], 16, 8, 0)
                         if isinstance(cell.tool, Blocker):
-                            pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0],
-                                      self.grid[i][j].tool.sprite[1], 16, 12, 0)
+                            if cell.tool.is_active:
+                                pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[0][0],
+                                          self.grid[i][j].tool.sprite[0][1], 16, 12, 0)
+                            else:
+                                pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].tool.sprite[1][0],
+                                          self.grid[i][j].tool.sprite[1][1], 16, 12, 0)
                     if cell.gate:
                         if cell.gate.is_entry:
                             pyxel.blt((cell.x * 16), (cell.y * 16) + 32, 0, self.grid[i][j].gate.sprites[1][0],

@@ -9,8 +9,8 @@ class Umbrella:
     """
     coordX: int = 0
     coordY: int = 0
-    __sprite = [0, 32]
-    isActive: bool = True
+    __sprite = [[0, 32],[32,64]]
+    __isActive: bool = False
 
     def __init__(self, x, y):
         self.coordX = x
@@ -23,3 +23,11 @@ class Umbrella:
     @sprite.setter
     def sprite(self, value):
         self.__sprite = value
+
+    @property
+    def is_active(self):
+        return self.__isActive
+
+    @is_active.setter
+    def is_active(self, value):
+        self.__isActive = value

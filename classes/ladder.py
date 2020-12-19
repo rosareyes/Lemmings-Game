@@ -13,8 +13,8 @@ class Ladder:
     """
     __coordX: int = 0
     __coordY: int = 0
-    __sprite: list = [[16,16], [32,16]]
-    isActive: bool = True
+    __sprite: list = [[16,16], [32,16], [48,64], [0,80]]
+    __isActive: bool = False
     __direction: str = "right"
 
     def __init__(self, x, y, dire):
@@ -37,3 +37,11 @@ class Ladder:
     @direction.setter
     def direction(self, value):
         self.__direction = value
+
+    @property
+    def is_active(self):
+        return self.__isActive
+
+    @is_active.setter
+    def is_active(self, value):
+        self.__isActive = value
