@@ -294,10 +294,10 @@ class App:
                 elif self.exist_floor(int(lemming.x), int(lemming.y)) and lemming.direction == "UR":
                     lemming.ascending = False
                     lemming.direction = "R"
-
                 elif self.exist_floor(int(lemming.x), int(lemming.y)) and lemming.direction == "UL":
                     lemming.ascending = False
                     lemming.direction = "L"
+
                 if self.have_blocker(int(lemming.x), int(lemming.y)):
                     lemming.changeDirection()
 
@@ -350,9 +350,10 @@ class App:
                 lemming.walk()
 
     def draw(self):
-        pyxel.cls(1)
-        pyxel.text(100, 0, "Lemmings Game", pyxel.frame_count % 16)
+        pyxel.cls(0)
 
+        pyxel.text(100, 0, "Lemmings Game", pyxel.frame_count % 16)
+        pyxel.text(0,245, "         blockers: b   umbrella: space    ladder: l/k",14)
         # We are printing here our object marker that has a class of marker with all of the game info
         pyxel.text(30, 10, "{}".format(self.marker.level), 7)
         pyxel.text(55, 10, "{}".format(self.marker.level_value), 6)
