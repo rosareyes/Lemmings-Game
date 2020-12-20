@@ -227,7 +227,6 @@ class App:
                 self.play_music(False, False, False)
                 self.sound = False
             else:
-                print("entre")
                 self.play_music(True, True, True)
                 self.sound = True
         # Cursor's movement
