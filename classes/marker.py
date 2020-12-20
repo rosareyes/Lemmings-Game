@@ -1,6 +1,15 @@
-# Do we need to do a class for the game board values?
-# Died, Alive, Lemmings...
-# Marker
+""" Class for the score table: Marker.
+
+    Attributes:
+    __level: in str we put the name "Level" and then we attribute the value 0 as integer.
+    __alive: in str we put the name "Alive" and then we attribute the value 0 as integer.
+    __saved: in str we put the name "Saved" and then we attribute the value 0 as integer.
+    __died: in str we put the name "Died" and then we attribute the value 0 as integer.
+    __ladders: in str we put the name "Ladders" and then we attribute the value 0 as integer.
+    __umbrellas: in str we put the name "Umbrellas" and then we attribute the value 0 as integer.
+    __blockers: in str we put the name "Blockers" and then we attribute the value 0 as integer.
+
+    """
 
 
 class Marker:

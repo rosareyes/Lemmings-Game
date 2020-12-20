@@ -34,6 +34,7 @@ class App:
         row = (int): the number of rows that the grid has.
         col = (int): the number of cols that the grid has.
         platforms = (list): list of 7 platforms randomly generated.
+        sound = (bool): it is used to control wether the sound is on or off.
 
     """
     level: int = 1
@@ -60,12 +61,38 @@ class App:
     col = int(WIDTH / 16)  # 16
     platforms = []
     not_floor: bool
+    sound = True
 
     def __init__(self):
         pyxel.init(self.GAME_WIDTH, self.GAME_HEIGHT, caption="Lemmings' Game")
         pyxel.load("../assets/lemming.pyxres")
+        pyxel.sound(0).set(
+            "f0c1f0c1 g0d1g0d1 c1g1c1g1 a0e1a0e1" "f0c1f0c1 f0c1f0c1 g0d1g0d1 g0d1g0d1",
+            "t",
+            "7",
+            "n",
+            25,
+        )
+
+        self.play_music(True, True, True)
         self.reset()
         pyxel.run(self.update, self.draw)
+
+    def play_music(self, ch0, ch1, ch2):
+        if ch0:
+            pyxel.play(0, [0, 1], loop=True)
+        else:
+            pyxel.stop(0)
+
+        if ch1:
+            pyxel.play(1, [2, 3], loop=True)
+        else:
+            pyxel.stop(1)
+
+        if ch2:
+            pyxel.play(2, 4, loop=True)
+        else:
+            pyxel.stop(2)
 
     def reset(self):
         """Initiate key variables"""
@@ -191,11 +218,18 @@ class App:
             return False
 
     def update(self):
-
         if pyxel.btnp(pyxel.KEY_ENTER):
             self.reset()
         if pyxel.btnp(pyxel.KEY_Q):
             pyxel.quit()
+        if pyxel.btnp(pyxel.KEY_S):
+            if self.sound:
+                self.play_music(False, False, False)
+                self.sound = False
+            else:
+                print("entre")
+                self.play_music(True, True, True)
+                self.sound = True
         # Cursor's movement
         if pyxel.btnp(pyxel.KEY_RIGHT):
             if self.sqX + 16 <= self.WIDTH - 16:
@@ -374,7 +408,7 @@ class App:
         if not self.end_game and not self.next_level:
             pyxel.cls(0)
             pyxel.text(100, 0, "Lemmings Game", pyxel.frame_count % 16)
-            pyxel.text(0, 245, "         blockers: b   umbrella: space    ladder: l/k", 14)
+            pyxel.text(0, 245, "blockers: B  umbrella: SPACE  ladders: L/K  sound: S  quit: Q", 14)
 
             # We are printing here our object marker that has a class of marker with all of the game info
             pyxel.text(30, 10, "{}".format(self.marker.level), 7)
