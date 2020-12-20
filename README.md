@@ -1,6 +1,4 @@
 <h1>Lemmings Game</h1>
-
-<h2> Lemmings’ Game Report </h2>
 <h3> Programming Final Project </h3>
 
 <p>This project emulates the game Lemmings. After following the steps indicated on the project requisites, a final functional version has been reached. The code has been designed taking into account future maintainability, code understandability and new game functions.</p>
