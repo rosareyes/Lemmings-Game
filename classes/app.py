@@ -99,7 +99,7 @@ class App:
         self.MAX_UMBRELLAS = 5
         self.MAX_BLOCKERS = 5
         self.MAX_LADDERS = 8
-        self.Max_Lemmings = 15
+        self.Max_Lemmings = random.randint(15,20)
         self.not_floor = True
         self.platforms = []
         self.grid = []
@@ -107,7 +107,7 @@ class App:
         self.dead_lemmings_list = []
         self.saved_lemmings = []
         self.lemmings_amount = self.Max_Lemmings
-
+        print(self.Max_Lemmings)
         if not self.end_game and self.next_level:
             self.level += 1
         else:
